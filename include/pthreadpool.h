@@ -3,33 +3,22 @@
 
 #include <iostream>
 #include <map>
-#include <ctime>
 #include "pthread_core.h"
 
-typedef time_t oper_time;
-
-#define DYNAMIC_UP_LIMIT (0.8)
-#define DYNAMIC_DOWN_LIMIT (0.2)
-#define DYNAMIC_INCREASE_RATIO (0.2)
-
-class Monitor;
-
 class PthreadPool {
-	friend class Monitor;
+
 public:
-	enum sizepolicy {STATIC , DYNAMIC};
-	PthreadPool(std::size_t poolsize, sizepolicy policy = PthreadPool::STATIC);
+	PthreadPool(std::size_t poolSize);
 	~PthreadPool();
+	void PostTask();
 
 private:
+	float GetLoad(); //ªÒ»°∏∫‘ÿ0~1
 
-	sizepolicy								m_policy;
-	std::size_t								m_poolsize_default;
-	volatile std::size_t					m_poolsize_dynamic;
-	volatile std::size_t					m_idlenum;
-	std::map<Pthread*, oper_time>			m_mltime;
-	std::map<Pthread*, Pthread::thrstu>		m_msta;
-	struct timeval							m_momitorloop;
+private:
+	std::size_t								m_Poolsize;
+	std::map<int, Pthread*>					m_mThreads;
+
 };
 
 #endif //_PTHREAD_POOL_H_

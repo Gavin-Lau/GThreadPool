@@ -13,6 +13,8 @@ typedef void*(*taskfuncp)(void*);
 typedef struct _task_t{
 	taskfuncp taskf;
 	void* taskpara;
+	int*  taskRet;
+	Pthread* handle;
 }task_t;
 
 class Pthread {
@@ -27,12 +29,14 @@ public:
 	void reset();
 	void cancel();
 
-	void setName(const std::string& name) { m_name = name; }
-	std::string getName() { return m_name; }
+	void setID(const int& id) { m_ID = id; }
+	int getName() { return m_ID; }
+	int getStatus() { return m_thrstu; }
 
+	static void threadFunc();
 private:
 
-	std::string		m_name;
+	int				m_ID;
 	pthread_attr_t	m_attr;
 	size_t			m_stacksize;
 	void *			mp_stackadd;

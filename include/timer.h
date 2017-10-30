@@ -15,7 +15,10 @@ inline void msleep(long msec)
 #ifdef _WIN32
 	Sleep(msec);
 #else
-	select(0, NULL, NULL, NULL, msec);
+  timeval tval;
+  tval.tv_usec = msec%1000;
+  tval.tv_sec = msec/1000;
+	select(0, NULL, NULL, NULL, &tval);
 #endif
 }
 

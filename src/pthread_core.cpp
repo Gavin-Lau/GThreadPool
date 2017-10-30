@@ -16,6 +16,14 @@ Pthread::Pthread(size_t stacksize)
 	{
 		pthread_attr_setstackaddr(&m_attr, mp_stackadd);
 	}
+
+	ATOMIC_ASSIGN(m_thrstu, WORKING);
+
+	if (pthread_create(&m_thread, &m_attr, , ))
+	{
+		ATOMIC_ASSIGN(m_thrstu, IDLE);
+		return;
+	}
 }
 
 Pthread::~Pthread()
@@ -27,18 +35,7 @@ Pthread::~Pthread()
 
 void Pthread::run(const task_t& task)
 {
-	ATOMIC_ASSIGN(m_thrstu, WORKING);
-	if (pthread_create(&m_thread, &m_attr, task.taskf, task.taskpara))
-	{
-		ATOMIC_ASSIGN(m_thrstu, IDLE);
-		return;
-	}
-
-	if (pthread_join(m_thread, NULL))
-	{
-		ATOMIC_ASSIGN(m_thrstu, ABORT);
-		return;
-	}
+}
 
 	ATOMIC_ASSIGN(m_thrstu, IDLE);
 }
@@ -72,3 +69,9 @@ void Pthread::cancel()
 		ATOMIC_ASSIGN(m_thrstu, ABORT);
 	}
 }
+
+void Pthread::threadFunc()
+{
+	while
+}
+
