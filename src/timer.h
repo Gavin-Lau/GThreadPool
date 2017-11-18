@@ -14,7 +14,6 @@ inline void msleep(long msec)
 {
 #ifdef _WIN32
 	Sleep(msec);
-
 #else
 	select(0, NULL, NULL, NULL, msec);
 #endif
