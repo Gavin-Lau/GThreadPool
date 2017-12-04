@@ -65,7 +65,9 @@ void DataQueue::extractData(char* buf, int*bufLen)
 
 	while (bufcopyed < *buf)
 	{
-		memcpy(buf + bufcopyed, )
+		memcpy(buf + bufcopyed, m_bufs[m_extractChunk] + m_extractPos,
+					Min(curChunkavai, *bufLen - bufcopyed));
+
 	}
 	int queryLen = 0;
 	readBufLen(&queryLen);

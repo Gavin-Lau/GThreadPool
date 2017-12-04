@@ -1,5 +1,7 @@
 #include "pthreadpool.h"
-#include "timer.h"
+#include "pthread_core.h"
+#include "pthread_sync.h"
+
 #include <assert.h>
 
 using std::cout;

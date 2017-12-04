@@ -9,17 +9,17 @@ Pthread::Pthread(size_t stacksize)
 	pthread_attr_init(&m_attr);
 	size_t defaultsize = 0;
 	pthread_attr_setstacksize(&m_attr, m_stacksize);
-	mp_stackadd = (void*)malloc(m_stacksize);
-	if (NULL == mp_stackadd)
+	m_pstackadd = (void*)malloc(m_stacksize);
+	if (NULL == m_pstackadd)
 		ATOMIC_ASSIGN(m_thrstu, UNINIT);
 	else
 	{
-		pthread_attr_setstackaddr(&m_attr, mp_stackadd);
+		pthread_attr_setstackaddr(&m_attr, m_pstackadd);
 	}
 
 	ATOMIC_ASSIGN(m_thrstu, WORKING);
 
-	if (pthread_create(&m_thread, &m_attr, , ))
+	if (pthread_create(&m_thread, &m_attr, Pthread::threadFunc, ))
 	{
 		ATOMIC_ASSIGN(m_thrstu, IDLE);
 		return;
@@ -29,16 +29,11 @@ Pthread::Pthread(size_t stacksize)
 Pthread::~Pthread()
 {
 	pthread_attr_destroy(&m_attr);
-	free(mp_stackadd);
-	mp_stackadd = NULL;
+	free(m_pstackadd);
+	m_pstackadd = NULL;
 }
 
-void Pthread::run(const task_t& task)
-{
-}
 
-	ATOMIC_ASSIGN(m_thrstu, IDLE);
-}
 
 //reset the thread while it's in not working status
 void Pthread::reset()
@@ -47,11 +42,11 @@ void Pthread::reset()
 	{
 		case UNINIT:
 			pthread_attr_setstacksize(&m_attr, m_stacksize);
-			mp_stackadd = (void*)malloc(m_stacksize);
-			if (NULL == mp_stackadd)
+			m_pstackadd = (void*)malloc(m_stacksize);
+			if (NULL == m_pstackadd)
 				ATOMIC_ASSIGN(m_thrstu, UNINIT);
 			else
-				pthread_attr_setstackaddr(&m_attr, mp_stackadd);
+				pthread_attr_setstackaddr(&m_attr, m_pstackadd);
 			break;
 
 		case ABORT:
@@ -70,8 +65,11 @@ void Pthread::cancel()
 	}
 }
 
-void Pthread::threadFunc()
+void* Pthread::threadFunc(void* para)
 {
-	while
-}
+	Pthread* handle = (Pthread*)para;
+	while (handle->m_switchor)
+	{
 
+	}
+}

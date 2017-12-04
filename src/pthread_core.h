@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "atomic.h"
+#include "pthread_sync.h"
 
 #define  DEFAULT_STACKSIZE (2*1024*1024)
 
@@ -25,7 +26,6 @@ public:
 	//the most ordinary sys default stack size = 2M
 	Pthread(size_t stacksize = DEFAULT_STACKSIZE);
 	~Pthread();
-	void run(const task_t& task);
 	void reset();
 	void cancel();
 
@@ -33,16 +33,18 @@ public:
 	int getName() { return m_ID; }
 	int getStatus() { return m_thrstu; }
 
-	static void threadFunc();
+	static void* threadFunc(void* para);
 private:
 
 	int				m_ID;
 	pthread_attr_t	m_attr;
 	size_t			m_stacksize;
-	void *			mp_stackadd;
+	void *			m_pstackadd;
 	atomic_t		m_thrstu;
+	int				m_switchor; //线程开关
 	
 	pthread_t		m_thread;
+	Syncer			m_sync;
 };
 
 

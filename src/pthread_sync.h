@@ -5,45 +5,29 @@
 #include <assert.h>
 #include "atomic.h"
 
-class Locker {
+/**
+ * 锁和条件变量类
+ */
+class Syncer {
 
 public:
 
-	Locker() { pthread_mutex_init(m_lock, NULL); }
-	Locker(pthread_mutex_t*	lock) : m_lock(lock) { }
-	
-	~Locker() { pthread_mutex_destroy(m_lock); }
-
-	int Lock() { pthread_mutex_lock(m_lock); }
-
-	int unLock() { pthread_mutex_unlock(m_lock); }
-
-	pthread_mutex_t* getMutex() { return m_lock; }
-
-private:
-	pthread_mutex_t*	m_lock;
-
-};
-
-
-#include <pthread.h>
-
-class Condition{
-
-public:
-	Condition(Locker& lock)
-	{
-		m_mutex = lock.getMutex();
+	Syncer() : m_signal(false)
+	{ 
+		pthread_mutex_init(m_mutex, NULL);
 		pthread_cond_init(m_cond, NULL);
 	}
 
-	Condition(pthread_mutex_t* mutex_)
-	{
-		m_mutex = mutex_;
-		pthread_cond_init(m_cond, NULL);
+	~Syncer() 
+	{ 
+		pthread_cond_destroy(m_cond);
+		pthread_mutex_destroy(m_mutex); 
 	}
 
-	~Condition() { pthread_cond_destroy(m_cond); }
+
+	int Lock() { pthread_mutex_lock(m_mutex); }
+
+	int unLock() { pthread_mutex_unlock(m_mutex); }
 
 	void Wait()
 	{
@@ -64,11 +48,19 @@ public:
 		pthread_cond_signal(m_cond);
 	}
 
+	void notifyAll() //Todo:多消费者模型，使用单个m_signal有问题
+	{
+		pthread_mutex_lock(m_mutex);
+		m_signal = true;
+		pthread_mutex_unlock(m_mutex);
+		pthread_cond_broadcast(m_cond);
+	}
+
 private:
-	pthread_mutex_t* m_mutex;
+	pthread_mutex_t*	m_mutex;
 	pthread_cond_t*  m_cond;
 	bool			 m_signal;
-};
 
+};
 
 #endif //_PTHREAD_LOCK_H_

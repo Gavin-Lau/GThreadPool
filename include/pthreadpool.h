@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include "pthread_core.h"
+#include "pthread_sync.h"
 
 class PthreadPool {
 
@@ -18,7 +19,7 @@ private:
 private:
 	std::size_t								m_Poolsize;
 	std::map<int, Pthread*>					m_mThreads;
-
+	Locker									m_locker;
 };
 
 #endif //_PTHREAD_POOL_H_
